@@ -15,7 +15,7 @@ urlpatterns = [
         "", views.Home, name="home"
     ),
     path(
-        "profile/<user_id>", views.ViewProfile, name="profile"
+        "profile/view_profile/<user_id>", views.ViewProfile, name="profile"
     ),
     path(
         "profile/search", views.ProfileSearch, name="profile-search"
