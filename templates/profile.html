@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<div class="w-[95%] m-auto flex flex-row">
+    <div class="mt-5 w-[65%]">
+        <div class="flex flex-row items-center LibreFranklinRegular">
+            {% if UserProfile.pfp %}
+            <img src="{{UserProfile.pfp.url}}" class="profile">
+            {% else %}
+            <img src="{% static 'images/default.png' %}" class="profile">
+            {% endif %}
+            <span class=" text-[40px] ml-4">{{UserProfile.fname|default_if_none:"---"}} {{UserProfile.lname|default_if_none:"---"}}</span>
+            <span class="ml-auto text-gray-400">{{UserProfile.get_pronouns_display|default_if_none:"---"}}</span>
+        </div>
+        <hr class="mt-2 border-[2px]">
+        <div class="flex flex-row items-center LibreFranklinRegular py-4 text-[#111937] w-[85%]">
+            <span class="text-[18px]">{{UserProfile.get_strand_display|default_if_none:"---"|upper}}</span>
+            <a target="_blank" class="ml-auto text-gray-400" href="{{UserProfile.onedlink|default_if_none:''}}"><span  >Link to onedrive <i class="fa-solid fa-circle-arrow-right fa-lg"></i></span></a>
+        </div>
+        <hr class="border-[2px] w-[85%]">
+        <div class="flex flex-row items-center LibreFranklinRegular py-4 text-[#111937]">
+            <span class="text-[18px]"><i class="fa-regular fa-envelope fa-lg mr-2" style="color:#111937"></i>{{UserProfile.email|default_if_none:"---"}}</span>
+        </div>
+        <hr class="border-[2px] w-[85%]">
+        <div class="flex flex-row gap-[25px] mt-5 pb-5 ">
+            <div>
+                {% if userOutputs.img_output1 %}
+                <img src="{{userOutputs.img_output1.url}}" class="w-[270px]">
+                {% else %}
+                <img src="{% static 'images/no-image.jpg' %}" class="w-[270px]">
+                {% endif %}
+            </div>
+            <div>
+                {% if userOutputs.img_output2 %}
+                <img src="{{userOutputs.img_output2.url}}" class="w-[270px]">
+                {% else %}
+                <img src="{% static 'images/no-image.jpg' %}" class="w-[270px]">
+                {% endif %}
+            </div>
+            <div>
+                {% if userOutputs.img_output3 %}
+                <img src="{{userOutputs.img_output3.url}}" class="w-[270px]">
+                {% else %}
+                <img src="{% static 'images/no-image.jpg' %}" class="w-[270px]">
+                {% endif %}
+            </div>
+        </div>
+        <div class="text-[#111937]">
+            <span class="text-[18px] ArimoBold ">About</span>
+            <hr class="mt-2 border-[1px]">
+            <div class="pt-2 pb-10">
+                <span class="LibreFranklinRegular">{{UserProfile.about|default_if_none:"---"}}
+                    </span>
+            </div>
+        </div>
+    </div>
+    <div class="w-[35%] flex flex-row ml-10 mt-10 text-[#111937]">
+        <div class=" w-[50%]">
+            <div>
+                <p class="ArimoReg text-[18px]"><b>EXTRACURRICULAR</b></p>
+                <hr class="border-[1px] w-[85%] my-4">
+                {% if userClubs %}
+                    {% for clubs in userClubs %}
+                    <p class="my-2 text-[15px]">{{ clubs.get_user_club_display }}</p>
+                    {% endfor %}
+                {% else %}
+                <p class="my-1 text-[15px]"><b>---</b></p>
+                {% endif %}
+            </div>
+            <div class="mt-8">
+                <p class="ArimoReg text-[18px]"><b>EDUCATION</b></p>
+                <hr class="border-[1px] w-[85%] my-4">
+                {% if userEducation %}
+                {% for educ in userEducation %}
+                    <div class="my-4">
+                        <p class="text-[15px]"><b>{{educ.get_educ_type_display}}</b></p>
+                        <p class="text-[15px]">{{educ.school|default_if_none:"---"|title}}</p>
+                        <p class="text-[15px]">{{educ.year|default_if_none:"---"|title}}</p>
+                    </div>
+                {% endfor %}
+                {% else %}
+                <p class="my-1 text-[15px]"><b>---</b></p>
+                {% endif %}
+            </div>
+        </div>
+        <div class=" w-[50%]">
+            <div>
+                <p class="ArimoReg text-[18px]"><b>LANGUAGES</b></p>
+                <hr class="border-[1px] w-[85%] my-4">
+                {% if userLanguages %}
+                {% for lang in userLanguages %}
+                <div class="my-4">
+                    <p class="text-[15px]"><b>{{lang.user_lang|title}}</b></p>
+                    <p class="text-[15px]">{{lang.get_lang_proficiency_display}}</p>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="my-1 text-[15px]"><b>---</b></p>
+                {% endif %}
+            </div>
+            <div class="mt-8">
+                <p class="ArimoReg text-[18px]"><b>INTERESTS</b></p>
+                <hr class="border-[1px] w-[85%] my-4">
+                {% if userInterests %}
+                {% for interest in userInterests %}
+                <p class="my-2 text-[15px]">{{interest.get_user_interest_display}}</p>
+                {% endfor %}
+                {% else %}
+                <p class="my-1 text-[15px]"><b>---</b></p>
+                {% endif %}
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

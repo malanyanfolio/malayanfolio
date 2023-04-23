@@ -1,0 +1,70 @@
+{% extends "base_login.html" %}
+{% block content %}
+<body class="bg-[#111937]">
+    <div class="w-[80%] m-auto mt-14 text-[#FFFF]">
+        <div class="">
+            <span class="ArimoReg  text-[24px]">MALAYANFOLIO.COM</span>
+        </div>
+        <div class="m-auto mt-14 w-[50%] text-center">
+            <div class="">
+                <span class="ArimoReg  text-[24px]">VERIFY YOUR ACCOUNT</span>
+                <hr class="w-[20%] m-auto border-[1.5px] mt-2">
+            </div>
+            <div class="mt-12">
+                <span class="LibreFranklinRegular text-[18px]">To start using MalayanFolio, please input the OTP 
+                    that was sent to <b><u>{{ email }}</u></b> to verify your account</span>
+            </div>
+            <div class="text-left w-[80%] m-auto mt-10">
+                <form method="POST" onsubmit="return validateOTP()" action="{% url 'create-account' %}" > {% csrf_token %} 
+                    <input value="{{ email }}" name="email" hidden>
+                    <input value="{{ username }}" name="username" hidden>
+                    <input value="{{ pass }}" name="password" hidden>
+                    <input value="{{ otp }}" id="otp" hidden> {{otp}}
+                    <div class="flex flex-row justify-center userInput ">
+                        <input type="text" id='ist' maxlength="1" onkeyup="clickEvent(this,'sec')" class="text-center focus:ring-[1px] focus:ring-[#6e87da] focus:border-[1px] focus:border-[#6e87da] w-[50px] h-[50px] border-[1px] border-gray-400 rounded-[5px]" required>&nbsp;
+                        <input type="text" id="sec" maxlength="1" onkeyup="clickEvent(this,'third')" class="text-center focus:ring-[1px] focus:ring-[#6e87da] focus:border-[1px] focus:border-[#6e87da] w-[50px] h-[50px] border-[1px] border-gray-400 rounded-[5px]" required>&nbsp;
+                        <input type="text" id="third" maxlength="1" onkeyup="clickEvent(this,'fourth')" class="text-center focus:ring-[1px] focus:ring-[#6e87da] focus:border-[1px] focus:border-[#6e87da] w-[50px] h-[50px] border-[1px] border-gray-400 rounded-[5px]" required>&nbsp;
+                        <input type="text" id="fourth" maxlength="1" onkeyup="clickEvent(this,'fifth')" class="text-center focus:ring-[1px] focus:ring-[#6e87da] focus:border-[1px] focus:border-[#6e87da] w-[50px] h-[50px] border-[1px] border-gray-400 rounded-[5px]" required>&nbsp;
+                        <input type="text" id="fifth" maxlength="1" onkeyup="clickEvent(this,'sixth')" class="text-center focus:ring-[1px] focus:ring-[#6e87da] focus:border-[1px] focus:border-[#6e87da] w-[50px] h-[50px] border-[1px] border-gray-400 rounded-[5px]" required>&nbsp;
+                        <input type="text" id="sixth" maxlength="1" class="text-center focus:ring-[1px] focus:ring-[#6e87da] focus:border-[1px] focus:border-[#6e87da] w-[50px] h-[50px] border-[1px] border-gray-400 rounded-[5px]" required>
+                    </div>
+            </div>
+            <p class="text-center mt-8 text-[14px] text-red-500" id="otp-error"></p>
+            <div class="mt-10">
+                <button type="submit" class="w-[150px] h-[50px] bg-white text-black ArimoBold text-[18px]">CONFIRM</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+function clickEvent(first,last){
+      if(first.value.length){
+        document.getElementById(last).focus();
+      }
+    }
+</script>
+<script>
+    function validateOTP(){
+        let otp = document.getElementById('otp').value 
+        let userOTP = `${document.getElementById('ist').value}${document.getElementById('sec').value}${document.getElementById('third').value}${document.getElementById('fourth').value}${document.getElementById('fifth').value}${document.getElementById('sixth').value}`
+        if(otp === userOTP){
+            return true
+        }
+        document.getElementById('ist').classList.add("border-red-500")
+        document.getElementById('ist').classList.add("border-[2px]")
+        document.getElementById('sec').classList.add("border-red-500")
+        document.getElementById('sec').classList.add("border-[2px]")
+        document.getElementById('third').classList.add("border-red-500")
+        document.getElementById('third').classList.add("border-[2px]")
+        document.getElementById('fourth').classList.add("border-red-500")
+        document.getElementById('fourth').classList.add("border-[2px]")
+        document.getElementById('fifth').classList.add("border-red-500")
+        document.getElementById('fifth').classList.add("border-[2px]")
+        document.getElementById('sixth').classList.add("border-red-500")
+        document.getElementById('sixth').classList.add("border-[2px]")
+        document.getElementById('otp-error').innerHTML = "Error: OTP does not match"
+        return false
+    }
+</script>
+{% endblock %}

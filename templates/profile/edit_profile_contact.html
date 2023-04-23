@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<div class="w-[90%] m-auto h-screen mt-4">
+    <p class="ArimoBold text-[60px] text-[#111937]">Edit Profile</p>
+    <hr class="border-[1px] w-[70%]">
+    <div class="flex flex-row">
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile" %}'><div class="w-[80%] m-auto py-2 hover:bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">PHOTO AND INFO</span>
+            </div></a>
+        </div>
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile-contact" %}'><div class="w-[80%] m-auto py-2 bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">CONTACT</span>
+            </div></a>
+        </div>
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile-about-me" %}'><div class="w-[80%] m-auto py-2 hover:bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">ABOUT ME</span>
+            </div></a>
+        </div>
+    </div>
+<form method="POST" enctype="multipart/form-data">{% csrf_token %}
+    <div class="mt-8 flex flex-row">
+        <div class="">
+            <label><b>EMAIL</b></label><br>
+            <input type="email" name="email" value="{{userProfile.email}}" class="bg-gray-200 border-[1px] border-white w-[400px] mt-2">
+        </div>
+        <div class="ml-10">
+            <label><b>ONEDRIVE LINK</b></label><br>
+            <input type="url" name="onedlink" value="{{userProfile.onedlink|default_if_none:' '}}" class="bg-gray-200 border-[1px] border-white w-[400px] mt-2">
+        </div>
+    </div>
+    <div class="flex flex-row mt-6 gap-[20px] flex-wrap pb-10">
+        <div class="">
+            <div class="flex-row flex justify-center">
+                {% if userOutputs.img_output1 %}
+                <img src="{{ userOutputs.img_output1.url }}" class="w-[300px] " id="img_container">
+                {% else %}
+                <img src="{% static 'images/no-image.jpg' %}" class="w-[300px] " id="img_container">
+                {% endif %}
+            </div>
+            <div class="flex-row flex justify-center mt-2">
+                <label for="img_file" class="ArimoBold px-10 py-2 bg-gray-400 text-center cursor-pointer "><i class="fa-solid fa-camera fa-lg mr-2"></i>UPLOAD NEW PHOTO</label>
+                <input type="file" id="img_file" class="hidden" accept="image/*" name="img_output1">
+            </div>
+        </div>
+        <div class="">
+            <div class="flex-row flex justify-center">
+                {% if userOutputs.img_output2 %}
+                <img src="{{ userOutputs.img_output2.url }}" class="w-[300px] " id="img_container2">
+                {% else %}
+                <img src="{% static 'images/no-image.jpg' %}" class="w-[300px] " id="img_container2">
+                {% endif %}
+            </div>
+            <div class="flex-row flex justify-center mt-2">
+                <label for="img_file2" class="ArimoBold px-10 py-2 bg-gray-400 text-center cursor-pointer "><i class="fa-solid fa-camera fa-lg mr-2"></i>UPLOAD NEW PHOTO</label>
+                <input type="file" id="img_file2" class="hidden" accept="image/*" name="img_output2">
+            </div>
+        </div>
+        <div class="">
+            <div class="flex-row flex justify-center">
+                {% if userOutputs.img_output3 %}
+                <img src="{{ userOutputs.img_output3.url }}" class="w-[300px]" id="img_container3">
+                {% else %}
+                <img src="{% static 'images/no-image.jpg' %}" class="w-[300px]" id="img_container3">
+                {% endif %}
+            </div>
+            <div class="flex-row flex justify-center mt-2">
+                <label for="img_file3" class="ArimoBold px-10 py-2 bg-gray-400 text-center cursor-pointer "><i class="fa-solid fa-camera fa-lg mr-2"></i>UPLOAD NEW PHOTO</label>
+                <input type="file" id="img_file3" class="hidden" accept="image/*" name="img_output3">
+            </div>
+        </div>
+        <div class="align-middle items-center">
+            <p class="ArimoBold text-[30px]">SAMPLE OUTPUTS</p>
+            <p class="ArimoReg text-[25px]">UPTO 3 PHOTOS ONLY</p>
+            <p class="ArimoReg text-[25px]">MAXIMUM OF 20 MB</p>
+            <div class="mt-10">
+                <button type="submit" class="w-[200px] h-[50px] bg-[#111937] text-white ArimoBold text-[18px] ">NEXT</button>
+            </div>
+        </div>
+    </div>
+</form>    
+</div>
+<script>
+    let img_container = document.getElementById('img_container')
+    let img_file = document.getElementById('img_file')
+    let img_container2 = document.getElementById('img_container2')
+    let img_file2 = document.getElementById('img_file2')
+    let img_container3 = document.getElementById('img_container3')
+    let img_file3 = document.getElementById('img_file3')
+    
+    img_file.onchange = evt => {
+        const [file] = img_file.files
+        if (file) {
+            img_container.src = URL.createObjectURL(file)
+        }
+        }
+    img_file2.onchange = evt => {
+        const [file] = img_file2.files
+        if (file) {
+            img_container2.src = URL.createObjectURL(file)
+        }
+        }
+   img_file3.onchange = evt => {
+        const [file] = img_file3.files
+        if (file) {
+            img_container3.src = URL.createObjectURL(file)
+        }
+        }
+
+</script>
+
+{% endblock %}

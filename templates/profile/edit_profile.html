@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+
+
+<div class="w-[90%] m-auto h-screen mt-4">
+    <p class="ArimoBold text-[60px] text-[#111937]">Edit Profile</p>
+    <hr class="border-[1px] w-[70%]">
+    <div class="flex flex-row">
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile" %}'><div class="w-[80%] m-auto py-2 bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">PHOTO AND INFO</span>
+            </div></a>
+        </div>
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile-contact" %}'><div class="w-[80%] m-auto py-2 hover:bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">CONTACT</span>
+            </div></a>
+        </div>
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile-about-me" %}'><div class="w-[80%] m-auto py-2 hover:bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">ABOUT ME</span>
+            </div></a>
+        </div>
+    </div>
+<form method="POST" enctype="multipart/form-data">{% csrf_token %}
+    <div class="flex flex-row mt-5">
+        <div class="w-[33%] pb-10">
+            <div class="flex-row flex justify-center">
+                {% if userProfile.pfp %} 
+                <img src="{{ userProfile.pfp.url }}" class="w-[350px] " id="img_container">
+                {% else %}
+                <img src="{% static 'images/no-image.jpg' %}" class="w-[350px] " id="img_container">
+                {% endif %}
+            </div>
+            <div class="flex-row flex justify-center mt-2">
+                <label for="img_file" class="ArimoBold px-[64px] py-2 bg-gray-400 text-center cursor-pointer "><i class="fa-solid fa-camera fa-lg mr-2"></i>UPLOAD NEW PHOTO</label>
+                <input type="file" id="img_file" class="hidden" accept="image/*"
+                name="pfp" >
+            </div>
+        </div>
+        <div class="w-[34%]">
+            <div class="mt-2">
+                <label><b>FIRST NAME </b></label><br>
+                <input 
+                id="{{ form.fname.id_for_label }}"
+                name="{{ form.fname.html_name }}"
+                value="{{ userProfile.fname|default_if_none:'' }}"
+                type="text" class="bg-gray-200 border-[1px] border-white w-[400px] mt-2" required>
+            </div>
+            <div class="mt-8">
+                <label for="{{ form.strand.id_for_label }}"><b>STRAND</b></label><br>
+                <select class="bg-gray-200 border-[1px] border-white w-[400px] mt-2" 
+                        id="{{ form.strand.id_for_label }}"
+                        name="{{ form.strand.html_name }}" required>
+                    <div class="border-2 border-red-500">
+                        {% for code, name in form.strand.field.choices %}
+                        <option value="{{ code }}"
+                                {% if code == userProfile.strand %} selected {% endif %}>
+                            {{ name }}
+                        </option>
+                        {% endfor %}
+                    </div>
+                </select>
+            </div>
+        </div>
+        <div class="w-[33%]">
+            <div  class="mt-2">
+                <label><b>LAST NAME</b></label><br>
+                <input 
+                    id="{{ form.lname.id_for_label }}"
+                    name="{{ form.lname.html_name }}"
+                    value="{{ userProfile.lname|default_if_none:'' }}"
+                    type="text" class="bg-gray-200 border-[1px] border-white w-[400px] mt-2" required>
+            </div>
+            <div class="mt-8">
+                <label><b>PRONOUNS</b></label><br>
+                <select class="bg-gray-200 border-[1px] border-white w-[400px] mt-2"
+                    id="{{ form.pronouns.id_for_label }}"
+                    name="{{ form.pronouns.html_name }}" required>
+                    <div class="border-2">
+                        {% for code, name in form.pronouns.field.choices %}
+                        <option value="{{ code }}"
+                                {% if code == userProfile.pronouns %} selected {% endif %}>
+                            {{ name }}
+                        </option>
+                        {% endfor %}
+                    </div>
+                </select>
+            </div>
+            <div class="mt-8">
+                <button type="submit" class="w-[200px] h-[50px] bg-[#111937] text-white ArimoBold text-[18px] ">NEXT</button>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+
+<script>
+    let img_container = document.getElementById('img_container')
+    let img_file = document.getElementById('img_file')
+    img_file.onchange = evt => {
+        const [file] = img_file.files
+        if (file) {
+            img_container.src = URL.createObjectURL(file)
+        }
+        }
+</script>
+{% endblock %}

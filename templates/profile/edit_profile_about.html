@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<div class="w-[90%] m-auto  mt-4 pb-12">
+    <p class="ArimoBold text-[60px] text-[#111937]">Edit Profile</p>
+    <hr class="border-[1px] w-[70%]">
+    <div class="flex flex-row">
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile" %}'><div class="w-[80%] m-auto py-2 hover:bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">PHOTO AND INFO</span>
+            </div></a>
+        </div>
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile-contact" %}'><div class="w-[80%] m-auto py-2 hover:bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">CONTACT</span>
+            </div></a>
+        </div>
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile-about-me" %}'><div class="w-[80%] m-auto py-2 bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">ABOUT ME</span>
+            </div></a>
+        </div>
+    </div>
+    <form method="POST" >{% csrf_token %}
+        <div class="flex flex-row mt-5">
+            <div class="w-[33%] pb-10">
+                <p class="ArimoBold text-[26px]"><b>EDUCATION</b></p>
+                {% for educ in educProfile %}
+                <div class="mt-6 text-left"> 
+                    <p class="ArimoBold text-[20px]"><b>{{ educ.get_educ_type_display|upper  }}</b></p>
+                    <input value="{{educ.school|default_if_none:''|title}}" name="name_{{educ.educ_type}}" placeholder="NAME" type="text" class="bg-gray-200 border-[1px] border-white w-[400px] mt-2" required>
+                    <input value="{{educ.year|default_if_none:''}}" name="year_{{educ.educ_type}}" placeholder="YEAR" type="text" class="bg-gray-200 border-[1px] border-white w-[250px] mt-2 " required>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="w-[34%]" >
+                <div id="extra-curri">
+                    <div class="mt-2"  >
+                        <input value="1" id="ec-count-new" name="EC-count" hidden>
+                        <label><b>EXTRACURRICULAR CLUBS</b>
+                        &nbsp;<button type="button" onclick="addExtraCurriField()"><i class="fa-solid fa-plus fa-xl cursor-pointer"></i></button>
+                        </label>
+                        <br>
+                        {% if ECProfile %}
+                            {% for ec in ECProfile %}
+                            <input type="text" value="{{ec.get_user_club_display }}" class="bg-gray-200 border-[1px] border-white w-[380px] mt-2" name="user_club{{ec.id}}"  readonly>
+                            <button type="button" onclick="showDeleteECModal('{{ec.id}}')" class="ml-2"><i class="fa-solid fa-xmark fa-xl text-[#df0c0c] cursor-pointer"></i></button>
+                            <div id="delete-EC-modal-{{ec.id}}" class="hidden h-full pt-[18%] xl:pt-[10%] w-full fixed z-[1] overflow-auto left-[0] top-[0] bg-[rgb(0,0,0)] bg-[rgba(0,0,0,0.4)]">
+                                <div class="w-[280px] xl:w-[400px] p-5 m-auto bg-white">
+                                    <div id="withdraw-confirmation" class=""> <!--MODAL FOR WITHDRAWAL CONFIRMATION -->
+                                        <div class="flex flex-row">
+                                            <button type="button" onclick="RemoveECModal('{{ec.id}}')" class="count-2 ml-auto mt-2 mr-2"><b>&#10005;</b></button>
+                                        </div>
+                                        <div class="w-[100%] m-auto text-center p-5 xl:p-10">
+                                            <p class="font-[500] text-[18px] xl:text-[20px] 2xl:text-[24px]">Are you sure you want to Delete this Club?</p>
+                                        </div>
+                                        <div class="flex flex-row text-[16px] justify-center">
+                                            <button type="button" onclick="RemoveECModal('{{ec.id}}')" class="border-0  px-[3rem] py-[.40rem] font-[500] text-primary">No</button>
+                                            <a href="{% url 'delete-ec' ec.id %}"><button type="button" class="ml-2 border-0 bg-[#111937] px-[3rem] py-[.40rem] font-[500] text-white">Yes</button></a>
+                                        </div><br>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <select id="user_club-1" class="bg-gray-200 border-[1px] border-white w-[380px] mt-2 new_EC" name="new_EC-1" required>
+                            <div class="border-2 border-red-500">
+                                {% for code, name in ExtraCurriForm.user_club.field.choices %}
+                                    {% if code in club_list %}
+                                        
+                                    {% else %}
+                                    <option value="{{ code }}">
+                                        {{ name }}
+                                    </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </select>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <label><b>ABOUT</b></label><br>
+                    <textarea name="about" class="w-[400px] bg-gray-200 h-[400px] border-white">{{userProfile.about|default_if_none:" "}}</textarea>
+                </div>
+            </div>
+            <div class="w-[33%]">
+                <div id="interest-container">
+                    <div class="mt-2"  >
+                        <input value="1" id="int-count-new" name="INT-count" hidden>
+                        <label><b>INTERESTS</b>
+                        &nbsp;<button type="button" onclick="addInterestField()"><i class="fa-solid fa-plus fa-xl cursor-pointer"></i></button>
+                        </label>
+                        <br>
+                        {% if InterestsProfile %}
+                            {% for int in InterestsProfile %}
+                            <input type="text" value="{{int.get_user_interest_display }}" class="bg-gray-200 border-[1px] border-white w-[380px] mt-2" name="user_interest{{ec.id}}"  readonly>
+                            <button type="button" onclick="showDeleteINTModal('{{int.id}}')" class="ml-2"><i class="fa-solid fa-xmark fa-xl text-[#df0c0c] cursor-pointer"></i></button>
+                            <div id="delete-INT-modal-{{int.id}}" class="hidden h-full pt-[18%] xl:pt-[10%] w-full fixed z-[1] overflow-auto left-[0] top-[0] bg-[rgb(0,0,0)] bg-[rgba(0,0,0,0.4)]">
+                                <div class="w-[280px] xl:w-[400px] p-5 m-auto bg-white">
+                                    <div id="withdraw-confirmation" class=""> <!--MODAL FOR WITHDRAWAL CONFIRMATION -->
+                                        <div class="flex flex-row">
+                                            <button type="button" onclick="RemoveINTModal('{{int.id}}')" class="count-2 ml-auto mt-2 mr-2"><b>&#10005;</b></button>
+                                        </div>
+                                        <div class="w-[100%] m-auto text-center p-5 xl:p-10">
+                                            <p class="font-[500] text-[18px] xl:text-[20px] 2xl:text-[24px]">Are you sure you want to Delete this Interest?</p>
+                                        </div>
+                                        <div class="flex flex-row text-[16px] justify-center">
+                                            <button type="button" onclick="RemoveINTCModal('{{int.id}}')" class="border-0  px-[3rem] py-[.40rem] font-[500] text-primary">No</button>
+                                            <a href="{% url 'delete-int' int.id %}"><button type="button" class="ml-2 border-0 bg-[#111937] px-[3rem] py-[.40rem] font-[500] text-white">Yes</button></a>
+                                        </div><br>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <select id="user_int-1" class="bg-gray-200 border-[1px] border-white w-[380px] mt-2 new_INT" name="new_INT-1" required>
+                            <div class="border-2 border-red-500">
+                                {% for code, name in InterestForm.user_interest.field.choices %}
+                                    {% if code in club_list %}
+                                    {% else %}
+                                    <option value="{{ code }}">
+                                        {{ name }}
+                                    </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </select>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <div id="language-container">
+                        <input name="lang_count" id="lang_count" value="1" hidden>
+                        <label><b>LANGUAGE</b><button class="ml-2" type="button" onclick="addLangField()"><i class="fa-solid fa-plus fa-xl cursor-pointer"></i></button></label><br>
+                        {% if LangProfile %}
+                            {% for lang in LangProfile %}
+                            <div class="">
+                                <input  type="text" class="bg-gray-200 border-[1px] border-white w-[380px] mt-2" value="{{lang.user_lang|title}}" readonly>
+                                <input  type="text" class="bg-gray-200 border-[1px] border-white w-[380px] mt-2" value="{{lang.get_lang_proficiency_display}}" readonly>
+                                <button type="button" onclick="ShowDeleteLangModal('{{lang.id}}')" class="ml-2"><i class="fa-solid fa-xmark fa-xl text-[#df0c0c] cursor-pointer"></i></button>
+                                <div id="delete-lang-modal-{{lang.id}}" class="hidden h-full pt-[18%] xl:pt-[10%] w-full fixed z-[1] overflow-auto left-[0] top-[0] bg-[rgb(0,0,0)] bg-[rgba(0,0,0,0.4)]">
+                                    <div class="w-[280px] xl:w-[400px] p-5 m-auto bg-white">
+                                        <div id="withdraw-confirmation" class=""> <!--MODAL FOR WITHDRAWAL CONFIRMATION -->
+                                            <div class="flex flex-row">
+                                                <button type="button" onclick="RemovelangModal('{{lang.id}}')" class="count-2 ml-auto mt-2 mr-2"><b>&#10005;</b></button>
+                                            </div>
+                                            <div class="w-[100%] m-auto text-center p-5 xl:p-10">
+                                                <p class="font-[500] text-[18px] xl:text-[20px] 2xl:text-[24px]">Are you sure you want to Delete this Language?</p>
+                                            </div>
+                                            <div class="flex flex-row text-[16px] justify-center">
+                                                <button type="button" onclick="RemovelangModal('{{lang.id}}')" class="border-0  px-[3rem] py-[.40rem] font-[500] text-primary">No</button>
+                                                <a href="{% url 'delete-lang' lang.id %}"><button type="button" class="ml-2 border-0 bg-[#111937] px-[3rem] py-[.40rem] font-[500] text-white">Yes</button></a>
+                                            </div><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr class="mt-2 border-[2px] w-[380px]">
+                            {% endfor %}
+                        {% else %} 
+                        <div id="lang-count-1" class="lang-fields">
+                            <input name="user_lang-1" type="text" class="bg-gray-200 border-[1px] border-white w-[380px] mt-2" placeholder="LANGUAGE">
+                            <select class="bg-gray-200 border-[1px] border-white w-[380px] mt-2 " name="lang_proficiency-1"  required>
+                                <div class="border-2 border-red-500">
+                                    {% for code, name in LanguageForm.lang_proficiency.field.choices %}
+                                        <option value="{{ code }}">
+                                            {{ name }}
+                                        </option>
+                                    {% endfor %}
+                                </div>
+                            </select>
+                            <hr class="mt-2 border-[2px] w-[380px]">
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <button type="submit" class="w-[200px] h-[50px] bg-[#111937] text-white ArimoBold text-[18px] ">UPDATE</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    function addExtraCurriField(){
+        let new_EC_fields = document.getElementsByClassName('new_EC')
+        let c = 1
+        for(i of new_EC_fields){
+            c = c + 1
+        }
+        document.getElementById('ec-count-new').value = c
+
+        let div = document.getElementById('extra-curri')
+        let count = document.getElementById('ec-count-new').value
+        
+        let new_field = `<select class="bg-gray-200 border-[1px] border-white w-[380px] mt-2 new_EC" name="new_EC-${count}" id="user_club-${count}" required><div class="border-2 border-red-500">{% for code, name in ExtraCurriForm.user_club.field.choices %}{% if code in club_list %} {% else %} <option value="{{ code }}">{{ name }}</option>{% endif %}{% endfor %}</div></select><button class="ml-3" type="button" id="remove-ec-button-${count}" onclick="RemoveEC(${count})"><i class="fa-solid fa-xmark fa-xl text-[#df0c0c] cursor-pointer"></i></button>`
+        div.insertAdjacentHTML('beforeend', new_field );
+
+    }
+
+    function RemoveEC(value){
+        document.getElementById(`user_club-${value}`).remove()
+        document.getElementById(`remove-ec-button-${value}`).remove()
+        
+    }
+</script>
+<script>
+    function showDeleteECModal(id){
+        document.getElementById(`delete-EC-modal-${id}`).classList.remove('hidden')
+    }
+    function RemoveECModal(id){
+        document.getElementById(`delete-EC-modal-${id}`).classList.add('hidden')
+    }
+</script>
+<script>
+    function addInterestField(){
+        let new_INT_fields = document.getElementsByClassName('new_INT')
+        let c = 1
+        for(i of new_INT_fields){
+            c = c + 1
+        }
+        document.getElementById('int-count-new').value = c
+
+        let div = document.getElementById('interest-container')
+        let count = document.getElementById('int-count-new').value
+        
+        let new_field = `<select class="bg-gray-200 border-[1px] border-white w-[380px] mt-2 new_INT" name="new_INT-${count}" id="user_int-${count}" required><div class="border-2 border-red-500">{% for code, name in InterestForm.user_interest.field.choices %}{% if code in interest_list %} {% else %} <option value="{{ code }}">{{ name }}</option>{% endif %}{% endfor %}</div></select><button class="ml-3" type="button" id="remove-int-button-${count}" onclick="RemoveINT(${count})"><i class="fa-solid fa-xmark fa-xl text-[#df0c0c] cursor-pointer"></i></button>`
+        div.insertAdjacentHTML('beforeend', new_field );
+
+    }
+
+    function RemoveINT(value){
+        document.getElementById(`user_int-${value}`).remove()
+        document.getElementById(`remove-int-button-${value}`).remove()
+        
+    }
+</script>
+<script>
+    function showDeleteINTModal(id){
+        document.getElementById(`delete-INT-modal-${id}`).classList.remove('hidden')
+    }
+    function RemoveINTModal(id){
+        document.getElementById(`delete-INT-modal-${id}`).classList.add('hidden')
+    }
+</script>
+<script>
+    function addLangField(){
+        let div = document.getElementById('language-container')
+        let count = 1
+        let lang_fields = document.getElementsByClassName('lang-fields')
+        for(i of lang_fields){
+            count = count + 1
+        }
+        document.getElementById('lang_count').value=count
+
+        let new_field = `<div id="lang-count-${count}" class="lang-fields"><input name="user_lang-${count}" type="text" class="bg-gray-200 border-[1px] border-white w-[380px] mt-2" placeholder="LANGUAGE"><select class="bg-gray-200 border-[1px] border-white w-[380px] mt-2 " name="lang_proficiency-${count}" required><div class="border-2 border-red-500">{% for code, name in LanguageForm.lang_proficiency.field.choices %}<option value="{{ code }}">{{ name }}</option>{% endfor %}</div></select><button onclick="removeLangField(${count})" type="button" class="ml-2"><i class="fa-solid fa-xmark fa-xl text-[#df0c0c] cursor-pointer"></i></button><hr class="mt-2 border-[2px] w-[380px]"></div>`
+        div.insertAdjacentHTML('beforeend', new_field );
+    }
+</script>
+<script>
+    function ShowDeleteLangModal(value){
+        document.getElementById(`delete-lang-modal-${value}`).classList.remove('hidden')
+    }
+    function RemovelangModal(value){
+        document.getElementById(`delete-lang-modal-${value}`).classList.add('hidden')
+    }
+    function removeLangField(count){
+        document.getElementById(`lang-count-${count}`).remove()
+    }
+</script>
+{% endblock %}
+
+

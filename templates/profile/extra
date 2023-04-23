@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<div class="w-[90%] m-auto h-screen mt-4">
+    <p class="ArimoBold text-[60px] text-[#111937]">Edit Profile</p>
+    <hr class="border-[1px] w-[70%]">
+    <div class="flex flex-row">
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile" %}'><div class="w-[80%] m-auto py-2 hover:bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">PHOTO AND INFO</span>
+            </div></a>
+        </div>
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile-contact" %}'><div class="w-[80%] m-auto py-2 hover:bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">CONTACT</span>
+            </div></a>
+        </div>
+        <div class="w-[23%] py-5 text-center">
+            <a href='{% url "edit-profile-about-me" %}'><div class="w-[80%] m-auto py-2 bg-gray-400 cursor-pointer">
+                <span class="ArimoBold text-[20px]">ABOUT ME</span>
+            </div></a>
+        </div>
+    </div>
+<form method="POST" >{% csrf_token %}
+    <div class="flex flex-row mt-5">
+        <div class="w-[33%] pb-10">
+            <p class="ArimoBold text-[26px]"><b>EDUCATION</b></p>
+         
+            {% for educ in educProfile %}
+            <div class="mt-6 text-left"> 
+                <p class="ArimoBold text-[20px]"><b>{{ educ.get_educ_type_display|upper  }}</b></p>
+                <input value="{{educ.school|default_if_none:''|title}}" name="name_{{educ.educ_type}}" placeholder="NAME" type="text" class="bg-gray-200 border-[1px] border-white w-[400px] mt-2" required>
+                <input value="{{educ.year|default_if_none:''}}" name="year_{{educ.educ_type}}" placeholder="YEAR" type="text" class="bg-gray-200 border-[1px] border-white w-[250px] mt-2 " required>
+            </div>
+            {% endfor %}
+            
+        </div>
+        <div class="w-[34%]" >
+            {% if ECProfile %}
+            <div id="extra-curri">
+                <div class="mt-2"  >
+                    <label><b>EXTRACURRICULAR CLUBS</b></label>&nbsp;<button type="button" onclick="addExtraCurriField()"><i class="fa-solid fa-plus fa-xl cursor-pointer"></i></button>
+                    <br>
+                    {% for ec in ECProfile %}
+                    <select class="bg-gray-200 border-[1px] border-white w-[380px] mt-2"  required>
+                        <div class="border-2 border-red-500">
+                            {% for code, name in ExtraCurriForm.user_club.field.choices %}
+                            <option value="{{ code }}"
+                                    {% if code == ec.user_club %} selected {% endif %}>
+                                {{ name }}
+                            </option>
+                            {% endfor %}
+                        </div>
+                    </select>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            {{ ECProfile }}
+            <div id="extra-curri">
+                <div class="mt-2"  >
+                    <input type="number" value=1  id="EC-count" name="EC-count" hidden>
+                    <label><b>EXTRACURRICULAR CLUBS</b></label>&nbsp;<button type="button" onclick="addExtraCurriField()"><i class="fa-solid fa-plus fa-xl cursor-pointer"></i></button>
+                    <br>
+                    <select class="bg-gray-200 border-[1px] border-white w-[380px] mt-2" id="user_club-1" name="user_club-1" required>
+                        <div class="border-2 border-red-500">
+                            {% for code, name in ExtraCurriForm.user_club.field.choices %}
+                            <option value="{{ code }}"
+                                    {% if code == userProfile.pronouns %} selected {% endif %}>
+                                {{ name }}
+                            </option>
+                            {% endfor %}
+                        </div>
+                    </select>
+                </div>
+            </div>
+            {% endif %}
+            <div class="mt-8">
+                <label><b>ABOUT</b></label><br>
+                <textarea name="about" class="w-[400px] bg-gray-200 h-[400px] border-white">{{userProfile.about|default_if_none:" "}}</textarea>
+            </div>
+        </div>
+        <div class="w-[33%]">
+            <div  class="mt-2">
+                <label><b>INTERESTS</b></label><br>
+                <select class="bg-gray-200 border-[1px] border-white w-[380px] mt-2">
+                    <div class="border-2">
+                        <option> </option>
+                        <option>Sports</option>
+                        <option>Traveling</option>
+                        <option>Photography</option>
+                        <option>Art</option>
+                        <option>Gaming</option>
+                        <option>Pets</option>
+                        <option>Music</option>
+                        <option>Literature</option>
+                    </div>
+                </select>
+                <i class="fa-solid fa-plus fa-xl cursor-pointer"></i>
+                <i class="fa-solid fa-xmark fa-xl text-[#df0c0c] cursor-pointer"></i>
+            </div>
+            <div class="mt-8">
+                <label><b>LANGUAGE</b></label><br>
+                <input type="text" class="bg-gray-200 border-[1px] border-white w-[380px] mt-2">
+                <i class="fa-solid fa-plus fa-xl cursor-pointer"></i>
+                <i class="fa-solid fa-xmark fa-xl text-[#df0c0c] cursor-pointer"></i>
+            </div>
+            <div class="mt-8">
+                <button type="submit" class="w-[200px] h-[50px] bg-[#111937] text-white ArimoBold text-[18px] ">UPDATE</button>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+<script>
+    function addExtraCurriField(){
+        let div = document.getElementById('extra-curri')
+        let count = document.getElementById('EC-count').value
+        count = parseInt(count) + 1
+        document.getElementById('EC-count').value = count
+        let new_field = `<select class="bg-gray-200 border-[1px] border-white w-[380px] mt-2" id="user_club-${count}" name="user_club-${count}" required><div class="border-2 border-red-500">{% for code, name in ExtraCurriForm.user_club.field.choices %}<option value="{{ code }}"{% if code == userProfile.pronouns %} selected {% endif %}>{{ name }}</option>{% endfor %}</div></select><button class="ml-2" type="button" onclick="Remove(${count})" id="EC-remove-button-${count}"><i class="fa-solid fa-xmark fa-xl text-[#df0c0c] cursor-pointer"></i></button>`
+        div.insertAdjacentHTML('beforeend', new_field );
+    }
+    function Remove(value){
+        document.getElementById(`user_club-${value}`).remove()
+        document.getElementById(`EC-remove-button-${value}`).remove()
+        
+    }
+</script>
+{% endblock %}
+
+

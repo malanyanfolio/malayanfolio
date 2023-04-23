@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+<div class="flex flex-row flex-wrap m-auto justify-center gap-[25px] mt-5 pb-5">
+    {% for users in AllUsers %}
+    <a href="{% url 'profile' users.id %}">
+        <div class="border-2 rounded-[5px] border-[#111937] min-h-[300px] w-[250px] bg-[#eae8e8] hover:bg-[#dad6d6] cursor-pointer">
+            <div class=" w-[80%] h-[80%] m-auto pt-4 pb-5">
+                {% if users.pfp %}
+                <img src="{{users.pfp.url}}" class="profile-home">
+                {% else %} 
+                <img src="{% static 'images/default.png' %}" class="profile-home">
+                {% endif %}
+                <div class="mt-2">
+                    {% if users.lname and users.fname %}
+                    <p class="LibreFranklinBold text-[20px]">{{users.fname}} {{users.lname}}</p>
+                    {% else %}
+                    <p class="LibreFranklinBold text-[20px]">{{users.user_id.username}}</p> 
+                    {% endif %}
+                    <p class="LibreFranklinRegular text-[15px]">{{users.email}}</p>
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

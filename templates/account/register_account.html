@@ -1,0 +1,104 @@
+{% extends "base_login.html" %}
+{% block content %}
+<body class="bg-[#111937]">
+    <div class="w-[80%] m-auto mt-14 text-[#FFFF] pb-10">
+        <div class="">
+            <span class="ArimoReg  text-[24px]">MALAYANFOLIO.COM</span>
+        </div>
+        <div class="m-auto mt-14 w-[50%] text-center">
+            <div class="">
+                <span class="ArimoReg  text-[24px]">CREATE NEW ACCOUNT</span>
+                <hr class="w-[20%] m-auto border-[1.5px] mt-2">
+            </div>
+            <div class="text-left w-[80%] m-auto mt-8">
+                <form method="POST" onsubmit="return validateData()" action="{% url 'confirm-account' %}"> {% csrf_token %}
+                    <div>
+                        <label>Username</label><br>
+                        <input id="username-field" name="username" type="text" class="mt-[6px] w-full focus:ring-[1px] focus:ring-[#6e87da] focus:border-[1px] focus:border-[#6e87da]" required>
+                        <span class="text-[12px] text-red-500" id="username-error"></span>
+                    </div>
+                    <div class="mt-4">
+                        <label>Email</label><br>
+                        <input id="email-field" name="email" type="email" class="mt-[6px] w-full focus:ring-[1px] focus:ring-[#6e87da] focus:border-[1px] focus:border-[#6e87da]" required>
+                        <span class="text-[12px] text-red-500" id="email-error"></span>
+                    </div>
+                    <div class="mt-4">
+                        <label>Password</label><br>
+                        <input name="pass1" id="pass1" type="password" class="mt-[6px] w-full focus:ring-[1px] focus:ring-[#6e87da] focus:border-[1px] focus:border-[#6e87da]" required>
+                        <span class="text-[12px] text-red-500" id="pass1-error"></span>
+                    </div>
+                    <div class="mt-4">
+                        <label>Confirm Password</label><br>
+                        <input name="pass2" id="pass2" type="password" class="mt-[6px] w-full focus:ring-[1px] focus:ring-[#6e87da] focus:border-[1px] focus:border-[#6e87da]" required>
+                        <span class="text-[12px] text-red-500" id="pass2-error"></span>
+                    </div>
+            </div>
+            <div class="mt-10">
+                <button type="submit" class="w-[150px] h-[50px] bg-white text-black ArimoBold text-[18px] ">SIGN UP</button>
+                <p class="mt-4 LibreFranklinRegular">Already have an Account? <a href="{% url 'login' %}"><u>Login Here</u></a></p>
+            </div>
+        </form>
+        </div>
+    </div>
+    {% for user in users %} 
+    <p class=" user_emails">{{user.email}}</p>
+    <p class=" user_usernames">{{user.username}}</p>
+    {% endfor %}
+</body>
+<script>
+    function validateData(){
+        pass = validatePassword()
+        user = checkUsername()
+        email = checkEmail()
+        if (!pass || !user || !email){
+            return false
+        }
+        return true
+    }
+    function validatePassword(){
+        let value = false
+        let pass1 = document.getElementById('pass1').value
+        let pass2 = document.getElementById('pass2').value
+        if (pass1 === pass2){
+            document.getElementById('pass1').classList.remove("border-red-500")
+            document.getElementById('pass2').classList.remove("border-red-500")
+            document.getElementById('pass1-error').innerHTML = ""
+            document.getElementById('pass2-error').innerHTML = ""
+            return true
+        }
+        document.getElementById('pass1').classList.add("border-red-500")
+        document.getElementById('pass2').classList.add("border-red-500")
+        document.getElementById('pass1-error').innerHTML = "Passwords must match"
+        document.getElementById('pass2-error').innerHTML = "Passwords must match"
+        return false
+    }
+    function checkEmail(){
+        let emails = document.getElementsByClassName('user_emails') 
+        let user_email = document.getElementById('email-field').value
+        for (email of emails){
+            if (email.innerHTML === user_email){
+                document.getElementById('email-field').classList.add("border-red-500")
+                document.getElementById('email-error').innerHTML = "Email is in use by another User"
+                return false
+            }
+        }
+        document.getElementById('email-field').classList.remove("border-red-500")
+        document.getElementById('email-error').innerHTML = ""
+        return true
+    }
+    function checkUsername(){
+        let usernames = document.getElementsByClassName('user_usernames') 
+        let user_username = document.getElementById('username-field').value
+        for (user of usernames){
+            if (user.innerHTML === user_username){
+                document.getElementById('username-field').classList.add("border-red-500")
+                document.getElementById('username-error').innerHTML = "Username already Exists"
+                return false
+            }
+        }
+        document.getElementById('username-field').classList.remove("border-red-500")
+        document.getElementById('username-error').innerHTML = ""
+        return true
+    }
+</script>
+{% endblock %}
