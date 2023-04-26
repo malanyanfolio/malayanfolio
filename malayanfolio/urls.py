@@ -18,9 +18,13 @@ urlpatterns = [
         "profile/view_profile/<user_id>", views.ViewProfile, name="profile"
     ),
     path(
-        "profile/search", views.ProfileSearch, name="profile-search"
+        "profile/search/accounts", views.ProfileSearch, name="profile-search"
     ),
 
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+#ERROR HANDLER
+handler404 = 'malayanfolio.views.handler404'
+handler500 = 'malayanfolio.views.handler500'

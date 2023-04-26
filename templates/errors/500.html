@@ -1,0 +1,21 @@
+{% extends "base_login.html" %}
+{% block content %}
+{% load static %}
+<body class="bg-[#111937]">
+    <div class="w-[80%] m-auto mt-14 text-[#FFFF]">
+        <div class="">
+            <span class="ArimoReg  text-[24px]">MALAYANFOLIO.COM</span>
+        </div>
+        <div class="justify-center items-center flex flex-col min-h-[70vh] text-center">
+            <div class="text-active flex flex-col text-center">
+                <img src="{% static 'images/warning-transparent.png' %}" class="xl:h-[123px] xl:w-[27px] w-[22px] h-[95] m-auto">
+                <span class="text-[30px] xl:text-[48px] 2xl:text-[56px]">Oops!</span>
+                <span class="text-[30px] xl:text-[48px] 2xl:text-[56px]">Something Went Wrong</span>
+            </div>
+            <div class="p-[16px] rounded-[2px] bg-white mt-[20px] xl:mt-[25px] px-[25px] cursor-pointer" action="{% url 'home' %}">
+                <button class="cursor-pointer" class=""><a href="{% url 'home' %}" class="text-[18px] text-[#111937]"><b>Homepage</b></a></button>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

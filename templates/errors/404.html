@@ -1,0 +1,21 @@
+{% extends "base_login.html" %}
+{% block content %}
+<body class="bg-[#111937]">
+    <div class="w-[80%] m-auto mt-14 text-[#FFFF]">
+        <div class="">
+            <span class="ArimoReg  text-[24px]">MALAYANFOLIO.COM</span>
+        </div>
+        <div class="m-auto w-[50%] text-center">
+            <div class="justify-center items-center flex flex-col min-h-[70vh] text-center">
+                <div class="text-active flex flex-col">
+                    <span class="text-[100px] h-[120px] xl:text-[135px] 2xl:text-[150px] xl:h-[200px] text-center">404</span>
+                    <span class="text-[30px] xl:text-[48px] 2xl:text-[56px]">Page Not Found</span>
+                </div>
+                <div class="p-[16px] rounded-[2px] bg-white mt-[20px] xl:mt-[25px] px-[25px] cursor-pointer" action="{% url 'home' %}">
+                    <button class="cursor-pointer" class=""><a href="{% url 'home' %}" class="text-[18px] text-[#111937]"><b>Homepage</b></a></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
